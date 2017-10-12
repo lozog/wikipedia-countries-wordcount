@@ -23,29 +23,21 @@
 
   function ready(error, data) {
     // console.log(data)
-    var countries1 = topojson.feature(data, data.objects.countries1).features
-    var countries2 = topojson.feature(data, data.objects.countries2).features
+    var countries = topojson.feature(data, data.objects.countries1).features
 
-    // console.log(countries1)
-    // console.log(countries2)
+    // console.log(countries)
 
-    var countries = svg.selectAll(".country")
-    countries.data(countries1)
-      // .data(countries2)
+    svg.selectAll(".country")
+      .data(countries)
       .enter().append("path")
       .attr("class", "country")
       .attr("d", path)
       .attr("fill", "#cccccc");
 
-    console.log(svg)
-    console.log(countries._parents[0].children)
+    // console.log(svg)
+    // console.log(countries._parents[0].children)
 
-    // countries._parents[0].children.each((p, j) => {
-    //   console.log(p, j);
-    //   d3.select(this)
-    // });
-
-    _.forEach(countries._parents[0].children, function(country, key) {
+    _.forEach(svg.selectAll(".country")._parents[0].children, function(country, key) {
       randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
       country.setAttribute("fill", randomColor);
     });
