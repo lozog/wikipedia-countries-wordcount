@@ -16,4 +16,4 @@ This project is licensed under the WTFPL License - see the [license](http://www.
 
 ## Acknowledgments
 
-* [Jonathon Soma](https://www.youtube.com/watch?v=aNbgrqRuoiE&t=268s)'s d3 & topojson tutorial
+* Jonathon Soma's [d3 & topojson tutorial](https://www.youtube.com/watch?v=aNbgrqRuoiE&t=268s)
