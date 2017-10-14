@@ -47,13 +47,15 @@
   }
 
   function wikipediaArticle(searchterm) {
+    searchRegex = new RegExp(searchterm,"g");
+
     baseurl = "https://en.wikipedia.org/w/api.php?"
     params = {
       action: "query",
       titles: searchterm,
-      prop: "revisions",
+      prop: "extracts|revisions",
       format: "json",
-      rvprop:"content"
+      rvprop:"ids"
     }
 
     baseurl = baseurl.concat($.param(params));
@@ -69,8 +71,12 @@
       success: (response) => {
         console.log("success")
         fromwiki = response.query.pages
-        key = Object.getOwnPropertyNames(fromwiki)
-        console.log(fromwiki[key[0]].revisions[0])
+        console.log(fromwiki)
+        pageId = Object.getOwnPropertyNames(fromwiki)[0]
+        articleText = fromwiki[pageId].extract
+        count = (articleText.match(searchRegex) || []).length;
+        // document.getElementById('result').innerHTML = articleText
+        console.log(count)
       }
     });
   }
