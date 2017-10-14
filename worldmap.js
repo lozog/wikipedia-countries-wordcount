@@ -41,5 +41,37 @@
       randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
       country.setAttribute("fill", randomColor);
     });
+
+    console.log("searching wiki...");
+    wikipediaArticle("Canada");
+  }
+
+  function wikipediaArticle(searchterm) {
+    baseurl = "https://en.wikipedia.org/w/api.php?"
+    params = {
+      action: "query",
+      titles: searchterm,
+      prop: "revisions",
+      format: "json",
+      rvprop:"content"
+    }
+
+    baseurl = baseurl.concat($.param(params));
+    console.log(baseurl)
+
+    $.ajax({
+      url: baseurl,
+      type: 'GET',
+      dataType: 'jsonp',
+      xhrFields: {
+          withCredentials: true
+      },
+      success: (response) => {
+        console.log("success")
+        fromwiki = response.query.pages
+        key = Object.getOwnPropertyNames(fromwiki)
+        console.log(fromwiki[key[0]].revisions[0])
+      }
+    });
   }
 })();
