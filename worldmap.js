@@ -49,32 +49,55 @@
     });
 
     // console.log(countryNamesArray)
-    countryNames = countryNamesArray.slice(0, 20).join('|');
-    console.log("searching wiki...");
-    wikipediaArticle(countryNames, countriesDOM);
+    countryNames = countryNamesArray.slice(0,20).join('|');
+    // console.log("searching wiki...");
+    getWordcounts(countryNames, countriesDOM, fillCountries);
   }
 
-  function wikipediaArticle(searchterm, domElements) {
-    console.log(searchterm);
-    console.log(domElements);
+  function fillCountries(response) {
+    searchterm = "the";
+    countryResults = [];
+    console.log("success");
+    fromwiki = response.query.pages;
+    console.log("retrieved", Object.keys(fromwiki).length, "pages");
+
     searchRegex = new RegExp(searchterm,"g");
+
+    _.forEach(fromwiki, function(page, pageId) {
+      extract = page.extract;
+      // console.log(page)
+      if (extract != null) {
+        articleText = $(extract).text();
+        // console.log(articleText);
+        count = (articleText.match(searchRegex) || []).length;
+        // // document.getElementById('result').innerHTML = articleText
+        console.log("name:", page.title, ", pageId:",pageId,", count:", count);
+      } else {
+        console.log("couldn\'t find articletext for", page.title);
+        count = 0; // TODO: articleText shouldn't be null
+      }
+    }); // forEach
+  }
+
+  function getWordcounts(countryNames, domElements, callback) {
+    // console.log(searchterm);
+    // console.log(domElements);
 
     baseurl = "https://en.wikipedia.org/w/api.php?";
     params = {
       action: "query",
-      titles: searchterm,
+      titles: countryNames,
       prop: "extracts|revisions",
       format: "json",
       rvprop:"ids",
       excontinue:1,
-      exlimit:'max',
+      exlimit:'20',
       exintro: 'true'
     };
 
     baseurl = baseurl.concat($.param(params));
-    console.log(baseurl);
+    // console.log(baseurl);
 
-    countryResults = [];
     $.ajax({
       url: baseurl,
       type: 'GET',
@@ -83,24 +106,8 @@
           withCredentials: true
       },
       success: (response) => {
-        console.log("success");
-        fromwiki = response.query.pages;
-        console.log(Object.keys(fromwiki).length, "pages retrieved");
-
-        _.forEach(fromwiki, function(page, pageId) {
-          articleText = page.extract;
-          // console.log(page)
-          if (articleText != null) {
-            // console.log(articleText);
-            count = (articleText.match(searchRegex) || []).length;
-            // // document.getElementById('result').innerHTML = articleText
-          } else {
-            count = 0; // TODO: aticleText shouldn't be null
-          }
-          // countryResults.push({name: page.title, count: count})
-          // console.log(count)
-        }); // forEach
+        callback(response);
       } // success
     }); // ajax
-  } // wikipediaArticle
+  } // getWordcounts
 })();
